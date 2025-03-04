@@ -1,0 +1,95 @@
+import sys
+from datetime import datetime
+import argparse
+from spmpup import utils
+import subprocess
+
+def get_template():
+    '''
+    Creating a template batch file for spm's old normalization job. 
+
+    Returns:
+        JOB_TEMPLATE (str): Text of the template batch file
+    '''
+    JOB_TEMPLATE = r"""%-----------------------------------------------------------------------
+    % Job saved on <DATETIME> by cfg_util (rev $Rev: 7345 $)
+        % spm SPM - Unknown
+    % cfg_basicio BasicIO - Unknown
+    %-----------------------------------------------------------------------
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.subj.source = <SOURCE>;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.subj.wtsrc = '';
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.subj.resample = <OUTPUT>;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.template = <TEMPLATE>;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.weight = '';
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.smosrc = 8;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.smoref = 0;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.regtype = 'mni';
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.cutoff = 25;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.nits = 16;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.reg = 1;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.preserve = 0;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.bb = [-78 -112 -70
+                                                            78 76 85];
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.vox = [2 2 2];
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.interp = 1;
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.wrap = [0 0 0];
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.prefix = 'w';
+    """
+
+    return JOB_TEMPLATE
+
+def create_4d_volume_list(nifti_path, nframes):
+    """
+    Creates a MATLAB-like cell array in the format:
+    {
+     '/path/img.nii,1'
+     '/path/img.nii,2'
+    }
+
+    Args:
+        nifti_path (str): File path for the 4D nifti image
+        nframes (int): Number of frames to be used for creating the cell array
+
+    Returns:
+        vol_list (str): MATLAB-like cell array
+    """
+    lines = ["{"] # start of the cell array
+    for i in range(1, nframes + 1):
+        lines.append(f"'{nifti_path},{i}'")
+    lines.append("}") # end of the cell array
+
+    vol_list = "\n".join(lines)
+
+    return vol_list
+
+def create_batch(fpath):
+    source_str = create_4d_volume_list(fpath, 1)
+    template_pth = utils.get_mni_template_path()
+    template_str = create_4d_volume_list(template_pth, 1)
+    output_str = create_4d_volume_list(fpath, 4)
+    job_template = get_template()
+    time = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
+    replaced_template = job_template.replace("<SOURCE>", source_str)
+    replaced_template = replaced_template.replace("<OUTPUT>", output_str)
+    replaced_template = replaced_template.replace("<TEMPLATE>", template_str)
+    replaced_template = replaced_template.replace("<DATETIME>", time)
+    with open ("/tmp/batch.m", 'w') as f:
+        f.write(replaced_template)
+    
+    return "/tmp/batch.m"
+
+def main():
+    parser = argparse.ArgumentParser(description="SPM based normalization")
+    parser.add_argument("--source", type=str, required=True, help="Path to the source file")
+    args = parser.parse_args()
+    SCRIPT_PATH = "/Applications/CAT12.9_R2023b_MCR_Mac/run_spm12.sh"
+    MCR_PATH = "/Applications/MATLAB/MATLAB_Runtime/R2023b"
+    
+    batch_file = create_batch(args.source)
+
+    out = subprocess.run([SCRIPT_PATH, MCR_PATH, "batch", batch_file], check=True, capture_output=True, text=True)
+    print("Normalization done.")
+    return None
+
+if __name__ == "__main__":
+    main()
