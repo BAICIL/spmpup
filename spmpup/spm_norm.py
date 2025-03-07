@@ -2,6 +2,7 @@ import sys
 from datetime import datetime
 import argparse
 from spmpup import utils
+import nibabel as nib
 import subprocess
 
 def get_template():
@@ -63,10 +64,12 @@ def create_4d_volume_list(nifti_path, nframes):
     return vol_list
 
 def create_batch(fpath):
+    img = nib.load(fpath)
+    n_frames = img.header['dim'][4]
     source_str = create_4d_volume_list(fpath, 1)
     template_pth = utils.get_mni_template_path()
     template_str = create_4d_volume_list(template_pth, 1)
-    output_str = create_4d_volume_list(fpath, 4)
+    output_str = create_4d_volume_list(fpath, n_frames)
     job_template = get_template()
     time = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
     replaced_template = job_template.replace("<SOURCE>", source_str)
