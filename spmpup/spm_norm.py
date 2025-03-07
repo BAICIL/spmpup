@@ -78,9 +78,9 @@ def create_batch(fpath):
     
     return "/tmp/batch.m"
 
-def spmnorm(pet_file):
-    SCRIPT_PATH = "/Applications/CAT12.9_R2023b_MCR_Mac/run_spm12.sh"
-    MCR_PATH = "/Applications/MATLAB/MATLAB_Runtime/R2023b"
+def spmnorm(pet_file, mcr_location, script_path):
+    SCRIPT_PATH = script_path
+    MCR_PATH = mcr_location
     
     batch_file = create_batch(pet_file)
 
@@ -92,9 +92,12 @@ def spmnorm(pet_file):
 def main():
     parser = argparse.ArgumentParser(description="SPM based normalization")
     parser.add_argument("--source", type=str, required=True, help="Path to the source file")
+    parser.add_argument("--mcr", type=str, required=True, help="Path to the Matlab Runtime location")
+    parser.add_argument("--script_path", type=str, required=True, help="Path to the location of the run_spm12.sh script")
     args = parser.parse_args()
     
-    spmnorm(args.source)
+    spmnorm(args.source, args.mcr, args.script_path)
+
 
     return None
 
