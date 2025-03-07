@@ -28,12 +28,12 @@ def get_template():
     matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.nits = 16;
     matlabbatch{1}.spm.tools.oldnorm.estwrite.eoptions.reg = 1;
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.preserve = 0;
-    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.bb = [-78 -112 -70
-                                                            78 76 85];
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.bb = [NaN NaN NaN
+                                                            NaN NaN NaN];
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.vox = [2 2 2];
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.interp = 1;
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.wrap = [0 0 0];
-    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.prefix = 'w';
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.prefix = 'norm_';
     """
 
     return JOB_TEMPLATE
@@ -78,17 +78,24 @@ def create_batch(fpath):
     
     return "/tmp/batch.m"
 
+def spmnorm(pet_file):
+    SCRIPT_PATH = "/Applications/CAT12.9_R2023b_MCR_Mac/run_spm12.sh"
+    MCR_PATH = "/Applications/MATLAB/MATLAB_Runtime/R2023b"
+    
+    batch_file = create_batch(pet_file)
+
+    out = subprocess.run([SCRIPT_PATH, MCR_PATH, "batch", batch_file], check=True, capture_output=True, text=True)
+    print("Normalization done.")
+    return None
+
+
 def main():
     parser = argparse.ArgumentParser(description="SPM based normalization")
     parser.add_argument("--source", type=str, required=True, help="Path to the source file")
     args = parser.parse_args()
-    SCRIPT_PATH = "/Applications/CAT12.9_R2023b_MCR_Mac/run_spm12.sh"
-    MCR_PATH = "/Applications/MATLAB/MATLAB_Runtime/R2023b"
     
-    batch_file = create_batch(args.source)
+    spmnorm(args.source)
 
-    out = subprocess.run([SCRIPT_PATH, MCR_PATH, "batch", batch_file], check=True, capture_output=True, text=True)
-    print("Normalization done.")
     return None
 
 if __name__ == "__main__":
