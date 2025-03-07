@@ -47,9 +47,13 @@ def gzip_file(file_path):
     return file_path + '.gz'
 
 def get_mni_template_path():
-    with ir.path("spmpup.data", "MNI_template.nii.gz") as p:
+    with ir.path("spmpup.data", "MNI_template.nii") as p:
         return Path(p)
 
 def get_mni_atlas_path():
-    with ir.path("spmpup.data", "AAL.nii.gz") as p:
+    with ir.path("spmpup.data", "AAL3v1.nii") as p:
+        return Path(p)
+    
+def get_mni_labels_path():
+    with ir.path("spmpup.data", "AAL3v1.txt") as p:
         return Path(p)
