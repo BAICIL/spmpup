@@ -1,0 +1,7 @@
+1 AVID_frontal_med_orb 1
+2 AVID_ant_cingulate 2
+3 AVID_post_cingulate 3
+4 AVID_temporal 4
+5 AVID_parietal 5
+6 AVID_precuneus 6
+7 AVID_cerebellum 7
