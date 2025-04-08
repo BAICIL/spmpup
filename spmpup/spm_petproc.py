@@ -10,12 +10,12 @@ import spmpup.utils
 
 def run_pup(
     pet_nifti,
+    mcr_path,
+    spm_path,
     pet_json=None,
     derivatives_dir=None,
     start_time=None,
-    duration=None,
-    mcr_path,
-    spm_path
+    duration=None
 ):
 
     print("Copying PET data to derivatives directory")
@@ -72,10 +72,18 @@ def run_pup(
         )
     )
 
+    print("Generate the PET FOV file")
+    petfov = spmpup.utils.create_pet_fov(msumfile)
+
+    print("Normalizing to MNI space")
     unzip_msum = spmpup.utils.gunzip_file(msumfile)
     unzip_msum_norm_dir = os.path.dirname(unzip_msum)
     unzip_msum_norm_fn = os.path.basename(unzip_msum)
     unzip_msum_norm = os.path.join(unzip_msum_norm_dir, f"norm_{unzip_msum_norm_fn}") 
+    unzip_petfov = spmpup.utils.gunzip_file(petfov)
+    unzip_petfov_norm_dir = os.path.dirname(unzip_petfov)
+    unzip_petfov_norm_fn = os.path.basename(unzip_petfov)
+    unzip_petfov_norm = os.path.join(unzip_petfov_norm_dir, f"norm_{unzip_petfov_norm_fn}")
     spmpup.spm_norm.spmnorm(unzip_msum, mcr_path, spm_path)
 
     print("Generate SUV table for AAL3v1")
@@ -96,7 +104,22 @@ def main():
         description="Process PET data using the PUP workflow."
     )
     parser.add_argument(
-        "--pet_nifti", type=str, required=True, help="Path to the input PET file."
+        "--pet_nifti", 
+        type=str, 
+        required=True, 
+        help="Path to the input PET file."
+    )
+    parser.add_argument(
+        "--mcr_path",
+        type=str,
+        required=True,
+        help="Path to Matlab Runtime"
+    )
+    parser.add_argument(
+        "--spm_path",
+        required=True,
+        type=str,
+        help="Path to the run_spm12.sh script"
     )
     parser.add_argument(
         "--pet_json",
@@ -126,18 +149,7 @@ def main():
         default=None,
         help="Total duration for frames of interest (optional, default=None)",
     )
-    parser.add_argument(
-        "--mcr_path",
-        type=str,
-        required=True,
-        help="Path to Matlab Runtime"
-    )
-    parser.add_argument(
-        "--spm_path",
-        required=True,
-        type=str,
-        help="Path to the run_spm12.sh script"
-    )
+
     args = parser.parse_args()
 
     result = pup.time_function(

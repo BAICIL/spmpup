@@ -5,7 +5,7 @@ from spmpup import utils
 import nibabel as nib
 import subprocess
 
-def get_template():
+def get_job_template():
     '''
     Creating a template batch file for spm's old normalization job. 
 
@@ -39,7 +39,7 @@ def get_template():
 
     return JOB_TEMPLATE
 
-def create_4d_volume_list(nifti_path, nframes):
+def create_4d_volume_list(nifti_path, nframes, petfov=None):
     """
     Creates a MATLAB-like cell array in the format:
     {
@@ -57,20 +57,22 @@ def create_4d_volume_list(nifti_path, nframes):
     lines = ["{"] # start of the cell array
     for i in range(1, nframes + 1):
         lines.append(f"'{nifti_path},{i}'")
+    if petfov is not None:
+        lines.append("'petfov,1'")
     lines.append("}") # end of the cell array
 
     vol_list = "\n".join(lines)
 
     return vol_list
 
-def create_batch(fpath):
+def create_batch(fpath, petfov=None):
     img = nib.load(fpath)
     n_frames = img.header['dim'][4]
     source_str = create_4d_volume_list(fpath, 1)
     template_pth = utils.get_mni_template_path()
     template_str = create_4d_volume_list(template_pth, 1)
-    output_str = create_4d_volume_list(fpath, n_frames)
-    job_template = get_template()
+    output_str = create_4d_volume_list(fpath, n_frames, petfov)
+    job_template = get_job_template()
     time = datetime.now().strftime("%d-%b-%Y %H:%M:%S")
     replaced_template = job_template.replace("<SOURCE>", source_str)
     replaced_template = replaced_template.replace("<OUTPUT>", output_str)
@@ -81,11 +83,11 @@ def create_batch(fpath):
     
     return "/tmp/batch.m"
 
-def spmnorm(pet_file, mcr_location, script_path):
+def spmnorm(pet_file, mcr_location, script_path, fov_file=None):
     SCRIPT_PATH = script_path
     MCR_PATH = mcr_location
     
-    batch_file = create_batch(pet_file)
+    batch_file = create_batch(pet_file, fov_file)
 
     out = subprocess.run([SCRIPT_PATH, MCR_PATH, "batch", batch_file], check=True, capture_output=True, text=True)
     print("Normalization done.")
@@ -97,9 +99,10 @@ def main():
     parser.add_argument("--source", type=str, required=True, help="Path to the source file")
     parser.add_argument("--mcr", type=str, required=True, help="Path to the Matlab Runtime location")
     parser.add_argument("--script_path", type=str, required=True, help="Path to the location of the run_spm12.sh script")
+    parser.add_argument("--fov", type=str, required=False, default=None, help="Path to the FOV file")
     args = parser.parse_args()
     
-    spmnorm(args.source, args.mcr, args.script_path)
+    spmnorm(args.source, args.mcr, args.script_path, args.fov)
 
 
     return None
