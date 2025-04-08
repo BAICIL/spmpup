@@ -31,11 +31,13 @@ pip install git+https://github.com/BAICIL/spmpup.git
 ```
 run_spmpup [-h] --pet_nifti PET_NIFTI 
             [--pet_json PET_JSON] 
+            --mcr_path MATLAB RUNTIME PATH
+            --spm_path SPM SCRIPT PATH
+            --tracer TRACER TYPE
+            --ref_region REFERENCE REGION
             [--derivatives_dir DERIVATIVES_DIR] 
             [--start_time START_TIME] 
             [--duration DURATION] 
-            --mcr_path MATLAB RUNTIME PATH
-            --spm+path SPM SCRIPT PATH
             
 
 Process PET data using the PUP workflow.
@@ -45,6 +47,10 @@ options:
     show this help message and exit
   --pet_nifti PET_NIFTI 
     Path to the input PET file.
+  --tracer TRACER TYPE
+    Choose one tracer from [fbp, pib, nav, ftp, mk].
+  --ref_region REFERENCE REGION
+    Choose one reference region. For amyloid - cerebellum & tau - inf_cerebellum.
   --pet_json PET_JSON
     Path to the input PET JSON file.
   --derivatives_dir DERIVATIVES_DIR
@@ -65,7 +71,9 @@ options:
 ```
 run_spmpup --pet_nift /path/to/pet.nii.gz \
           --mcr_path /path/to/matlab/runtime \
-          --spm_path /path/to/spm/run_spm12.sh 
+          --spm_path /path/to/spm/run_spm12.sh \
+          --tracer mk \
+          --ref_regioin inf_cerebellum
 
 ```
 2. Organized minimal inputs: In this case the derivatives directory will be provided by the user to better organize the output. In this case, the processed data will be located in the `derivatives/sub-XXX/ses-XXX/Tracer/`
@@ -74,6 +82,8 @@ run_spmpup --pet_nift /path/to/pet.nii.gz \
 run_spmpup --pet_nifti /path/to/pet.nii.gz \
           --derivatives_dir /path/to/derivatives \
           --mcr_path /path/to/matlab/runtime \
-          --spm_path /path/to/spm/run_spm12.sh 
+          --spm_path /path/to/spm/run_spm12.sh \
+          --tracer mk \
+          --ref_regioin inf_cerebellum 
 
 ```

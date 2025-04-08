@@ -154,7 +154,7 @@ def main():
         required=True,
         type=str.lower,
         choices=["cerebellum", "inf_cerebellum"],
-        help="Choose one reference region. For amyloid - cerebellum & tau - inf_cerebellum"
+        help="Choose one reference region. For amyloid - cerebellum & tau - inf_cerebellum."
     )
     parser.add_argument(
         "--pet_json",
