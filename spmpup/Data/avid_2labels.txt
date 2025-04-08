@@ -1,2 +1,2 @@
-1 Mean_Cortical 1
-2 Cerebellum 2
+1 Mean_Cortical
+2 Cerebellum
