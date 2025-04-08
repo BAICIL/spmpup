@@ -4,7 +4,8 @@ import os
 import pypetup as pup
 import spmpup
 import spmpup.spm_norm
-import spmpup.suv
+import spmpup.suvr
+import spmpup.suvr_image
 import spmpup.utils
 
 
@@ -12,6 +13,8 @@ def run_pup(
     pet_nifti,
     mcr_path,
     spm_path,
+    tracer_type,
+    ref_region,
     pet_json=None,
     derivatives_dir=None,
     start_time=None,
@@ -84,15 +87,33 @@ def run_pup(
     unzip_petfov_norm_dir = os.path.dirname(unzip_petfov)
     unzip_petfov_norm_fn = os.path.basename(unzip_petfov)
     unzip_petfov_norm = os.path.join(unzip_petfov_norm_dir, f"norm_{unzip_petfov_norm_fn}")
-    spmpup.spm_norm.spmnorm(unzip_msum, mcr_path, spm_path)
+    spmpup.spm_norm.spmnorm(unzip_msum, mcr_path, spm_path, tracer_type, unzip_petfov)
 
-    print("Generate SUV table for AAL3v1")
-    atlas = spmpup.utils.get_mni_atlas_path()
-    labels = spmpup.utils.get_mni_labels_path()
-    suv = os.path.join(unzip_msum_norm_dir, "AAL3v1_SUV.csv")
-    suv_file = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suv)
-    print(f"{suv_file} is generated.")
+    print("Generate SUVR image in MNI space")
+    suvr_img_path = os.path.join(unzip_msum_norm_dir, [input_pet_filename_without_extension + '_SUVR.nii'])
+    ref_region_path = spmpup.utils.get_pet_resource(ref_region)
+    spmpup.suvr_image.compute_suvr(unzip_msum_norm, ref_region_path, suvr_img_path, unzip_petfov_norm)
+
+    print("Generate SUVR tables")
+    print("AAL...")
+    atlas, labels = spmpup.utils.get_pet_resource("aal")
+    suvr = os.path.join(unzip_msum_norm_dir, "AAL3v1_SUVR.csv")
+    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
     
+    print("AVID 2 Labels...")
+    atlas, labels = spmpup.utils.get_pet_resource("avid2")
+    suvr = os.path.join(unzip_msum_norm_dir, "AVID_2Labels_SUVR.csv")
+    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+    
+    print("AVID 7 Labels...")
+    atlas, labels = spmpup.utils.get_pet_resource("avid7")
+    suvr = os.path.join(unzip_msum_norm_dir, "AVID_7Labels_SUVR.csv")
+    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+
+    print("NPDKA Labels...")
+    atlas, labels = spmpup.utils.get_pet_resource("npdka")
+    suvr = os.path.join(unzip_msum_norm_dir, "NPDKA_SUVR.csv")
+    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
 
 def main():
     """
@@ -120,6 +141,20 @@ def main():
         required=True,
         type=str,
         help="Path to the run_spm12.sh script"
+    )
+    parser.add_argument(
+        "--tracer",
+        required=True,
+        type=str.lower,
+        choices=["fbp", "pib", "nav", "ftp", "mk"],
+        help="Choose one tracer from [fbp, pib, nav, ftp, mk]."
+    )
+    parser.add_argument(
+        "--ref_region",
+        required=True,
+        type=str.lower,
+        choices=["cerebellum", "inf_cerebellum"],
+        help="Choose one reference region. For amyloid - cerebellum & tau - inf_cerebellum"
     )
     parser.add_argument(
         "--pet_json",
@@ -156,12 +191,14 @@ def main():
         run_pup,
         *(
             args.pet_nifti,
+            args.mcr_path,
+            args.spm_path,
+            args.tracer,
+            args.ref_regions,
             args.pet_json,
             args.derivatives_dir,
             args.start_time,
-            args.duration,
-            args.mcr_path,
-            args.spm_path
+            args.duration
         )
     )
 

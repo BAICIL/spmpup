@@ -2,18 +2,18 @@ from setuptools import setup, find_packages
 # Full setup configuration
 setup(
     name='spmpup',  
-    version='0.1',  
+    version='0.2',  
     license='MIT License',
     description='A tool to process PET only images.',  
     author='Dhruman Goradia, PhD', 
     author_email='Dhruman.Goradia2@bannerhealth.com',  
-    url='https://github.com/BAICIL/pypetup',
+    url='https://github.com/BAICIL/spmpup',
     
     # Automatically find and include all packages in the project
     packages=find_packages(),  
     include_package_data=True,
-    package_data={
-        "spmpup" = ["data/*.nii", "data/*.txt"],
+    package_data = {
+        "spmpup": ["data/*.nii", "data/*.txt"]
     },
 
     # List dependencies (install_requires can also directly list dependencies if requirements.txt is not used)
