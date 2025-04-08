@@ -47,31 +47,6 @@ def gzip_file(file_path):
     out = subprocess.run(["gzip", "-9", file_path], capture_output=True, check=True, text=True)
 
     return file_path + '.gz'
-
-def get_mni_template_path():
-    with ir.path("spmpup.data", "NAV_MNI_Template.nii") as p:
-        return Path(p)
-
-def get_mni_atlas_path(atlas=None):
-    atlas_dict = {
-        'AAL': 'AAL3v1.nii'
-    }
-    if atlas is None:
-        atlas = 'AAL'
-    fname = atlas_dict[atlas]
-    with ir.path("spmpup.data", fname) as p:
-        return Path(p)
-
-def get_mni_reference_path(roi=None):
-    roi_dict = {
-        'Cerebellum': 'Cerebellum.nii',
-        'InfCerebellum': 'InfCerebellum.nii',
-    }
-    if roi is None:
-        atlas = 'Cerebellum'
-    fname = roi_dict[roi]
-    with ir.path("spmpup.data", fname) as p:
-        return Path(p)
         
 def get_mni_labels_path():
     with ir.path("spmpup.data", "AAL3v1.txt") as p:
@@ -117,5 +92,56 @@ def create_pet_fov(pet_file, crop_idx=2):
         raise IOError(f"Error saving NIFTI file: {fov_file}")
     
     return fov_file
+
+TEMPLATES = {
+    "fbp": "fbp_mni.nii",
+    "pib": "pib_mni.nii",
+    "nav": "nav_mni.nii",
+    "mk": "template2.nii",
+    "ftp": "ftp_mni.nii"
+}
+
+ATLASES = {
+    "aal": ("aal3v1.nii", "aal3v1.txt"),
+    "avid2": ("avid_2labels.nii", "avid_2labels.txt"),
+    "avid7": ("avid_7labels.nii", "avid_7labels.txt"),
+    "npdka": ("npdka_aparc+aseg.nii", "npdka_aparc+aseg.txt")
+}
+
+REFERENCE = {
+    "cerebellum": "avid_cerebellum.nii",
+    "infcerebellum": "inferior_cerebellum.nii"
+}
+
+def get_pet_resource(resource = 'fbp'):
+    """
+    Retrieve the file path(s) for a PET template, reference region or atlas resource.
+
+    Parameters:
+        resource (str): Key for the resource, e.g., "fbp" for a template, "cerebellum" for a reference region or "aal" for an atlas.
+
+    Returns:
+        str: For a template, returns the file path as a string.
+        str: For a reference region, returns the file path as a string.
+        tuple: For an atlas, returns a tuple (image_path, label_path) as strings.
+
+    Raises:
+        ValueError: If the resource key is not found.
     
+    """
+    data_pkg = ir.files('spmpup.data')
     
+    if resource in TEMPLATES:
+        filename = TEMPLATES[resource]
+        return str(data_pkg.joinpath(filename))
+
+    elif resource in ATLASES:
+        image_filename, label_filename = ATLASES[resource]
+        return str(data_pkg.joinpath(image_filename)), str(data_pkg.joinpath(label_filename))
+    
+    elif resource in REFERENCE:
+        refname = REFERENCE[resource]
+        return str(data_pkg.joinpath(refname))
+
+    else:
+        raise ValueError(f"Resource '{resource}' not found in templates or atlases.")
