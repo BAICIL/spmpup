@@ -93,7 +93,7 @@ TEMPLATES = {
     "fbp": "fbp_mni.nii",
     "pib": "pib_mni.nii",
     "nav": "nav_mni.nii",
-    "mk": "template2.nii",
+    "mk": "mk_mni.nii",
     "ftp": "ftp_mni.nii"
 }
 
@@ -106,7 +106,7 @@ ATLASES = {
 
 REFERENCE = {
     "cerebellum": "avid_cerebellum.nii",
-    "infcerebellum": "inferior_cerebellum.nii"
+    "inf_cerebellum": "inferior_cerebellum.nii"
 }
 
 def get_pet_resource(resource = 'fbp'):

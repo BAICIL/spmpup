@@ -24,7 +24,7 @@ def run_pup(
     print("Copying PET data to derivatives directory")
     input_pet_dir = os.path.dirname(pet_nifti)
     input_pet_filename = os.path.basename(pet_nifti)
-    input_pet_filename_without_extension = input_pet_filename.split(".")[0]
+    input_pet_filename_without_extension = str(input_pet_filename.split(".")[0])
 
     if pet_json is None:
         pet_json = os.path.join(

@@ -58,7 +58,7 @@ def create_4d_volume_list(nifti_path, nframes, petfov=None):
     for i in range(1, nframes + 1):
         lines.append(f"'{nifti_path},{i}'")
     if petfov is not None:
-        lines.append("'petfov,1'")
+        lines.append(f"'{petfov},1'")
     lines.append("}") # end of the cell array
 
     vol_list = "\n".join(lines)
