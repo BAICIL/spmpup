@@ -194,7 +194,7 @@ def main():
             args.mcr_path,
             args.spm_path,
             args.tracer,
-            args.ref_regions,
+            args.ref_region,
             args.pet_json,
             args.derivatives_dir,
             args.start_time,
