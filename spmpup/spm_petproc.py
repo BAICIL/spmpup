@@ -9,7 +9,7 @@ import spmpup.suvr_image
 import spmpup.utils
 
 
-def run_pup(
+def run_spmpup(
     pet_nifti,
     mcr_path,
     spm_path,
@@ -188,7 +188,7 @@ def main():
     args = parser.parse_args()
 
     result = pup.time_function(
-        run_pup,
+        run_spmpup,
         *(
             args.pet_nifti,
             args.mcr_path,
