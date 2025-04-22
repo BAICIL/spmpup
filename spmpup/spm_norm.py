@@ -31,7 +31,7 @@ def get_job_template():
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.preserve = 0;
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.bb = [NaN NaN NaN
                                                             NaN NaN NaN];
-    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.vox = [2 2 2];
+    matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.vox = [1.5 1.5 1.5];
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.interp = 1;
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.wrap = [0 0 0];
     matlabbatch{1}.spm.tools.oldnorm.estwrite.roptions.prefix = 'norm_';
