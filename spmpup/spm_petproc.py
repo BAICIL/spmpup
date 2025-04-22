@@ -98,22 +98,22 @@ def run_pup(
     print("AAL...")
     atlas, labels = spmpup.utils.get_pet_resource("aal")
     suvr = os.path.join(unzip_msum_norm_dir, "AAL3v1_SUVR.csv")
-    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+    _ = spmpup.suvr.extract_suvr(atlas, suvr_img_path, labels, suvr)
     
     print("AVID 2 Labels...")
     atlas, labels = spmpup.utils.get_pet_resource("avid2")
     suvr = os.path.join(unzip_msum_norm_dir, "AVID_2Labels_SUVR.csv")
-    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+    _ = spmpup.suvr.extract_suvr(atlas, suvr_img_path, labels, suvr)
     
     print("AVID 7 Labels...")
     atlas, labels = spmpup.utils.get_pet_resource("avid7")
     suvr = os.path.join(unzip_msum_norm_dir, "AVID_7Labels_SUVR.csv")
-    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+    _ = spmpup.suvr.extract_suvr(atlas, suvr_img_path, labels, suvr)
 
     print("NPDKA Labels...")
     atlas, labels = spmpup.utils.get_pet_resource("npdka")
     suvr = os.path.join(unzip_msum_norm_dir, "NPDKA_SUVR.csv")
-    _ = spmpup.suv.extract_suv(atlas, unzip_msum_norm, labels, suvr)
+    _ = spmpup.suvr.extract_suvr(atlas, suvr_img_path, labels, suvr)
 
 def main():
     """

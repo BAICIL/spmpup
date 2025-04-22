@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def extract_suv(atlas, pet, labels, suvr, fov=None):
+def extract_suvr(atlas, pet, labels, suvr, fov=None):
     
     # Load the atlas and PET data
     """
@@ -155,7 +155,7 @@ def main():
     parser.add_argument('--suvr', required=True, help='Output CSV filename.')
     parser.add_argument('--fov', required=False, default=None, help='Path to the FOV file.')
     args = parser.parse_args()
-    _ = extract_suv(args.atlas, args.pet, args.labels, args.suvr, args.fov)
+    _ = extract_suvr(args.atlas, args.pet, args.labels, args.suvr, args.fov)
     return None
 
 if __name__ == '__main__':
