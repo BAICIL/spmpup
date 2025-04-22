@@ -49,7 +49,7 @@ def gzip_file(file_path):
     return file_path + '.gz'
         
 def get_mni_labels_path():
-    with ir.path("spmpup.data", "AAL3v1.txt") as p:
+    with ir.path("spmpup.Data", "AAL3v1.txt") as p:
         return Path(p)
     
 def create_pet_fov(pet_file, crop_idx=2):
@@ -129,7 +129,7 @@ def get_pet_resource(resource = 'fbp'):
         ValueError: If the resource key is not found.
     
     """
-    data_pkg = ir.files('spmpup.data')
+    data_pkg = ir.files('spmpup.Data')
     
     if resource in TEMPLATES:
         filename = TEMPLATES[resource]
