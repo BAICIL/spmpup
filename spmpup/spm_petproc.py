@@ -24,7 +24,7 @@ def run_pup(
     print("Copying PET data to derivatives directory")
     input_pet_dir = os.path.dirname(pet_nifti)
     input_pet_filename = os.path.basename(pet_nifti)
-    input_pet_filename_without_extension = str(input_pet_filename.split(".")[0])
+    input_pet_filename_without_extension = input_pet_filename.split(".")[0]
 
     if pet_json is None:
         pet_json = os.path.join(
@@ -90,7 +90,7 @@ def run_pup(
     spmpup.spm_norm.spmnorm(unzip_msum, mcr_path, spm_path, tracer_type, unzip_petfov)
 
     print("Generate SUVR image in MNI space")
-    suvr_img_path = os.path.join(unzip_msum_norm_dir, [input_pet_filename_without_extension + '_SUVR.nii'])
+    suvr_img_path = os.path.join(unzip_msum_norm_dir, input_pet_filename_without_extension + "_SUVR.nii")
     ref_region_path = spmpup.utils.get_pet_resource(ref_region)
     spmpup.suvr_image.compute_suvr(unzip_msum_norm, ref_region_path, suvr_img_path, unzip_petfov_norm)
 
