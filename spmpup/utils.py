@@ -48,10 +48,6 @@ def gzip_file(file_path):
 
     return file_path + '.gz'
         
-def get_mni_labels_path():
-    with ir.path("spmpup.Data", "AAL3v1.txt") as p:
-        return Path(p)
-    
 def create_pet_fov(pet_file, crop_idx=2):
     """
     Create a PET field of view (FOV) file. Clip the Superior 2 and 
