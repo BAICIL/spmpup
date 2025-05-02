@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),  
     include_package_data=True,
     package_data = {
-        "spmpup": ["data/*.nii", "data/*.txt"]
+        "spmpup": ["Data/*.nii", "Data/*.txt"]
     },
 
     # List dependencies (install_requires can also directly list dependencies if requirements.txt is not used)
